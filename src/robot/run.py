@@ -396,13 +396,31 @@ class RobotFramework(Application):
                              env_options='ROBOT_OPTIONS', logger=LOGGER)
 
     def main(self, datasources, **options):
+        print options
         settings = RobotSettings(options)
         LOGGER.register_console_logger(**settings.console_logger_config)
         LOGGER.info('Settings:\n%s' % unicode(settings))
         suite = TestSuiteBuilder(settings['SuiteNames'],
                                  settings['WarnOnSkipped'],
                                  settings['RunEmptySuite']).build(*datasources)
-        suite.configure(**settings.suite_config)
+        licensePath = None
+        for i in range(0, len(settings["Variables"])):
+            variablePair = settings["Variables"][i].split('licensepath:')
+            if len(variablePair) == 2:
+                """
+                Path variable was given!
+                """
+                licensePath = variablePair[1]
+                break
+                
+        if licensePath is not None:
+            """
+            Set the license path on the test suite configuration
+            """
+            suite.configure(**dict(settings.suite_config, licensepath=licensePath))
+        else:
+            suite.configure(**settings.suite_config)
+            
         with pyloggingconf.robot_handler_enabled(settings.log_level):
             result = suite.run(settings)
             LOGGER.info("Tests execution ended. Statistics:\n%s"

@@ -404,7 +404,8 @@ class RobotSettings(_BaseSettings):
                        'Listeners'          : ('listener', []),
                        'MonitorWidth'       : ('monitorwidth', 78),
                        'MonitorMarkers'     : ('monitormarkers', 'AUTO'),
-                       'DebugFile'          : ('debugfile', None)}
+                       'DebugFile'          : ('debugfile', None),
+                       'LicensePath'        : ('licensepath', None)}
 
     def get_rebot_settings(self):
         settings = RebotSettings()
