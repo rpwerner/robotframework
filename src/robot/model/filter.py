@@ -92,9 +92,7 @@ class Filter(EmptySuiteRemover):
             if self.runnerExtension.shouldTestBeExecuted(test.name, test.tags):
                 filteredTests.append(test)
 
-        if len(filteredTests) != 0:
-            return filteredTests
-        return tests
+        return filteredTests
 
     def _filter_by_suite_name(self, suite):
         if self.include_suites.match(suite.name, suite.longname):
