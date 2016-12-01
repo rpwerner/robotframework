@@ -396,7 +396,6 @@ class RobotFramework(Application):
                              env_options='ROBOT_OPTIONS', logger=LOGGER)
 
     def main(self, datasources, **options):
-        print options
         settings = RobotSettings(options)
         LOGGER.register_console_logger(**settings.console_logger_config)
         LOGGER.info('Settings:\n%s' % unicode(settings))

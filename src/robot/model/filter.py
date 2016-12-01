@@ -90,8 +90,22 @@ class Filter(EmptySuiteRemover):
         for i in range(len(tests)):
             test = tests[i]
             if self.runnerExtension.shouldTestBeExecuted(test.name, test.tags):
-                filteredTests.append(test)
-
+                if(os.environ.get('BSCS_PROJECT') is not None and os.environ['BSCS_PROJECT'] == "BSCS 17"): 
+                    url = 'http://localhost:8080/getTestcaseCoreLoopStage'
+                    if(os.environ.get('1DCLMONITOR_SERVER') is not None):
+                        url = 'http://'+os.environ['1DCLMONITOR_SERVER']+'/getTestcaseCoreLoopStage'
+                        
+                    url = url+'?name='+test.name+'&project='+os.environ['BSCS_PROJECT']
+                    print url
+                    headers = {"Content-type": "application/json", "Accept":"application/json"}
+                    response = requests.get(url, headers=headers)
+                    testcaseStage = response.text[1:-1]
+                    
+                    if((os.environ.get('TESTCASE_STAGE') is not None and os.environ['TESTCASE_STAGE'] == testcaseStage) or testcaseStage == "ALL"): 
+                        filteredTests.append(test)
+                else:
+                    filteredTests.append(test)
+                    
         return filteredTests
 
     def _filter_by_suite_name(self, suite):

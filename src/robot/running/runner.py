@@ -26,6 +26,10 @@ from .namespace import Namespace
 from .status import SuiteStatus, TestStatus
 from .timeouts import TestTimeout
 
+import time
+import os
+import requests
+from robot import utils
 
 # TODO: Some 'extract method' love needed here. Perhaps even 'extract class'.
 
@@ -152,6 +156,17 @@ class Runner(SuiteVisitor):
         result.endtime = get_timestamp()
         self._output.end_test(ModelCombiner(result, test))
         self._context.end_test(result)
+        
+        if(os.environ.get('BSCS_PROJECT') is not None and os.environ['BSCS_PROJECT'] == "BSCS 17"): 
+            url = 'http://localhost:8080/saveTestcase'
+            if(os.environ.get('1DCLMONITOR_SERVER') is not None):
+                url = 'http://'+os.environ['1DCLMONITOR_SERVER']+'/saveTestcase'
+            
+            testTags = [utils.html_escape(t) for t in test.tags]
+            testTags = str([t.encode('ascii', 'ignore') for t in test.tags]).replace("'", '"') 
+            data = '{"name":"'+test.name+'","project":{"name":"'+os.environ['BSCS_PROJECT']+'"},"status":"'+status.status+'","dateLastStatusChange":"'+time.strftime("%d.%m.%Y %H:%M:%S")+'", "tags":'+testTags+'}'
+            headers = {"Content-type": "application/json", "Accept":"application/json"}
+            requests.post(url, data=data, headers=headers)
 
     def _get_timeout(self, test):
         if not test.timeout:
