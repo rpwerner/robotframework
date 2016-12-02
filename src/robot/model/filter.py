@@ -18,6 +18,7 @@ from .tags import TagPatterns
 from .namepatterns import SuiteNamePatterns, TestNamePatterns
 from .visitor import SuiteVisitor
 import requests
+import os
 
 class EmptySuiteRemover(SuiteVisitor):
 
@@ -96,7 +97,6 @@ class Filter(EmptySuiteRemover):
                         url = 'http://'+os.environ['1DCLMONITOR_SERVER']+'/getTestcaseCoreLoopStage'
                         
                     url = url+'?name='+test.name+'&project='+os.environ['BSCS_PROJECT']
-                    print url
                     headers = {"Content-type": "application/json", "Accept":"application/json"}
                     response = requests.get(url, headers=headers)
                     testcaseStage = response.text[1:-1]
