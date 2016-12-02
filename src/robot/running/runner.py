@@ -157,7 +157,7 @@ class Runner(SuiteVisitor):
         self._output.end_test(ModelCombiner(result, test))
         self._context.end_test(result)
         
-        if(os.environ.get('BSCS_PROJECT') is not None and os.environ['BSCS_PROJECT'] == "BSCS 17"): 
+        if(os.environ.get('BSCS_PROJECT') is not None and os.environ['BSCS_PROJECT'] == "BSCS17"):
             url = 'http://localhost:8080/saveTestcase'
             if(os.environ.get('1DCLMONITOR_SERVER') is not None):
                 url = 'http://'+os.environ['1DCLMONITOR_SERVER']+'/saveTestcase'
