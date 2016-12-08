@@ -164,7 +164,17 @@ class Runner(SuiteVisitor):
             
             testTags = [utils.html_escape(t) for t in test.tags]
             testTags = str([t.encode('ascii', 'ignore') for t in test.tags]).replace("'", '"') 
-            data = '{"name":"'+test.name+'","project":{"name":"'+os.environ['BSCS_PROJECT']+'"},"status":"'+status.status+'","dateLastStatusChange":"'+time.strftime("%d.%m.%Y %H:%M:%S")+'", "tags":'+testTags+'}'
+            data = '{"name":"'+test.name+'","project":{"name":"'+os.environ['BSCS_PROJECT']+'"},"status":"'+status.status+'","dateLastStatusChange":"'+time.strftime("%d.%m.%Y %H:%M:%S")+'", "tags":'+testTags
+            """
+                look for soiversion variable
+                if we find it, put into the json for the rest call
+            """    
+            for variable in self._settings._opts['Variables']:
+                variableList = variable.split(":")
+                if(variableList[0] == "SOIVERSION"):
+                    data = data + ', "soiVersion":"'+variableList[1]+'"'
+            
+            data = data + '}'
             headers = {"Content-type": "application/json", "Accept":"application/json"}
             requests.post(url, data=data, headers=headers)
 

@@ -90,18 +90,43 @@ class Filter(EmptySuiteRemover):
         filteredTests = []
         for i in range(len(tests)):
             test = tests[i]
+            testName = test.name
+            soiVersion=""
+            for pattern in self.include_tags.__dict__['_patterns'][0]._patterns:
+                """
+                    List of all containing tags on this execution
+                    self.include_tags.__dict__['_patterns'][0]._patterns
+                """
+                includedTag = str(pattern.__dict__['_matcher'].pattern)
+                position = includedTag.find("CIL")
+                if(position != -1):
+                    """
+                        the tag comes like "CIL 7" and in order to keep the pattern
+                        it has to be saved as "CIL_7"
+                        
+                        TODO: find out how to read from -v SOIVERSION:CIL_7 
+                    """
+                    soiVersion = includedTag[position:position+5].replace(" ", "_")
+                    
             if self.runnerExtension.shouldTestBeExecuted(test.name, test.tags):
                 if(os.environ.get('BSCS_PROJECT') is not None and os.environ['BSCS_PROJECT'] == "BSCS17"):
                     url = 'http://localhost:8080/getTestcaseCoreLoopStage'
                     if(os.environ.get('1DCLMONITOR_SERVER') is not None):
                         url = 'http://'+os.environ['1DCLMONITOR_SERVER']+'/getTestcaseCoreLoopStage'
                         
-                    url = url+'?name='+test.name+'&project='+os.environ['BSCS_PROJECT']
+                    url = url+'?name='+test.name+'&project='+os.environ['BSCS_PROJECT']+'&soiVersion='+soiVersion
                     headers = {"Content-type": "application/json", "Accept":"application/json"}
                     response = requests.get(url, headers=headers)
                     testcaseStage = response.text[1:-1]
                     
-                    if((os.environ.get('TESTCASE_STAGE') is not None and os.environ['TESTCASE_STAGE'] == testcaseStage) or testcaseStage == "ALL"): 
+                    if(testcaseStage == "ALL" and os.environ['TESTCASE_STAGE'] == "STAGING"):
+                        """
+                        It means that the test case is new in the database and the current loop is STAGING.
+                        So we have to include the test to be executed
+                        """
+                        filteredTests.append(test)
+                        
+                    elif (os.environ['TESTCASE_STAGE'] == testcaseStage): 
                         filteredTests.append(test)
                 else:
                     filteredTests.append(test)
