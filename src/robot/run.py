@@ -402,16 +402,10 @@ class RobotFramework(Application):
         suite = TestSuiteBuilder(settings['SuiteNames'],
                                  settings['WarnOnSkipped'],
                                  settings['RunEmptySuite']).build(*datasources)
-        licensePath = None
-        for i in range(0, len(settings["Variables"])):
-            variablePair = settings["Variables"][i].split('licensepath:')
-            if len(variablePair) == 2:
-                """
-                Path variable was given!
-                """
-                licensePath = variablePair[1]
-                break
-                
+                                 
+        licensePath = self.getVariableFromSettings(settings, "licensepath:")
+        soiVersion = self.getVariableFromSettings(settings, "SOIVERSION:")
+        
         if licensePath is not None:
             """
             Set the license path on the test suite configuration
@@ -429,7 +423,17 @@ class RobotFramework(Application):
                                       else result)
                 writer.write_results(settings.get_rebot_settings())
         return result.return_code
-
+        
+    def getVariableFromSettings(self, settings, variableName):
+        for i in range(0, len(settings["Variables"])):
+            variablePair = settings["Variables"][i].split(variableName)
+            if len(variablePair) == 2:
+                """
+                Variable was found!
+                """
+                return variablePair[1]
+        return None
+        
     def validate(self, options, arguments):
         return self._filter_options_without_value(options), arguments
 

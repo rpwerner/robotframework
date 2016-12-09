@@ -22,7 +22,7 @@ class SuiteConfigurer(SuiteVisitor):
 
     def __init__(self, name=None, doc=None, metadata=None, set_tags=None,
                  include_tags=None, exclude_tags=None, include_suites=None,
-                 include_tests=None, empty_suite_ok=False, licensepath=None):
+                 include_tests=None, empty_suite_ok=False, soiVersion=None, licensepath=None):
         self.name = name
         self.doc = doc
         self.metadata = metadata
@@ -36,6 +36,7 @@ class SuiteConfigurer(SuiteVisitor):
         if licensepath is not None:
             self.runnerExtension = TestRunnerExtension()
             self.runnerExtension.initLicenses(licensepath)
+            self.runnerExtension.initSoiVersion(soiVersion)
         else:
             self.runnerExtension = None
 

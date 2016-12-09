@@ -405,7 +405,8 @@ class RobotSettings(_BaseSettings):
                        'MonitorWidth'       : ('monitorwidth', 78),
                        'MonitorMarkers'     : ('monitormarkers', 'AUTO'),
                        'DebugFile'          : ('debugfile', None),
-                       'LicensePath'        : ('licensepath', None)}
+                       'LicensePath'        : ('licensepath', None),
+                       'SoiVersion'        : ('soiversion', None)}
 
     def get_rebot_settings(self):
         settings = RebotSettings()

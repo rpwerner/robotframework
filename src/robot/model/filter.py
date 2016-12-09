@@ -114,6 +114,7 @@ class Filter(EmptySuiteRemover):
                     if(os.environ.get('1DCLMONITOR_SERVER') is not None):
                         url = 'http://'+os.environ['1DCLMONITOR_SERVER']+'/getTestcaseCoreLoopStage'
                         
+                    soiVersion = self.runnerExtension.getSoiVersion()
                     url = url+'?name='+test.name+'&project='+os.environ['BSCS_PROJECT']+'&soiVersion='+soiVersion
                     headers = {"Content-type": "application/json", "Accept":"application/json"}
                     response = requests.get(url, headers=headers)

@@ -6,6 +6,7 @@ class TestRunnerExtension():
 
     global activedLicense
     global deactivedLicense
+    global soiVersion
 
     """
         Initializes licenses by reading the license file given as input.
@@ -17,7 +18,12 @@ class TestRunnerExtension():
             self.get_active_license_from_server(str(licenseFileFullPathName))
             print "active licences from server"
             print self.activedLicense
-
+            
+    def initSoiVersion(self, soiVersion=None):
+        self.soiVersion = soiVersion
+            
+    def getSoiVersion(self):
+        return self.soiVersion
     """
         Called at every start of a test case. The tags of a test case are checked if they include license
         tags. If so the license tags should be contained in the license file otherwise the test case is skipped.
