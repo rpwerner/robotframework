@@ -92,22 +92,7 @@ class Filter(EmptySuiteRemover):
             test = tests[i]
             testName = test.name
             soiVersion=""
-            for pattern in self.include_tags.__dict__['_patterns'][0]._patterns:
-                """
-                    List of all containing tags on this execution
-                    self.include_tags.__dict__['_patterns'][0]._patterns
-                """
-                includedTag = str(pattern.__dict__['_matcher'].pattern)
-                position = includedTag.find("CIL")
-                if(position != -1):
-                    """
-                        the tag comes like "CIL 7" and in order to keep the pattern
-                        it has to be saved as "CIL_7"
-                        
-                        TODO: find out how to read from -v SOIVERSION:CIL_7 
-                    """
-                    soiVersion = includedTag[position:position+5].replace(" ", "_")
-                    
+            
             if self.runnerExtension.shouldTestBeExecuted(test.name, test.tags):
                 if(os.environ.get('BSCS_PROJECT') is not None and os.environ['BSCS_PROJECT'] == "BSCS17"):
                     url = 'http://localhost:8080/getTestcaseCoreLoopStage'
