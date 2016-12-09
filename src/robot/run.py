@@ -410,7 +410,7 @@ class RobotFramework(Application):
             """
             Set the license path on the test suite configuration
             """
-            suite.configure(**dict(settings.suite_config, licensepath=licensePath))
+            suite.configure(**dict(settings.suite_config, soiVersion=soiVersion, licensepath=licensePath))
         else:
             suite.configure(**settings.suite_config)
             
