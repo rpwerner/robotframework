@@ -96,8 +96,8 @@ class Filter(EmptySuiteRemover):
             if self.runnerExtension.shouldTestBeExecuted(test.name, test.tags):
                 if(os.environ.get('BSCS_PROJECT') is not None and os.environ['BSCS_PROJECT'] == "BSCS17"):
                     url = 'http://localhost:8080/getTestcaseCoreLoopStage'
-                    if(os.environ.get('1DCLMONITOR_SERVER') is not None):
-                        url = 'http://'+os.environ['1DCLMONITOR_SERVER']+'/getTestcaseCoreLoopStage'
+                    if(os.environ.get('ONEDCLMONITOR_SERVER') is not None):
+                        url = 'http://'+os.environ['ONEDCLMONITOR_SERVER']+'/getTestcaseCoreLoopStage'
                         
                     soiVersion = self.runnerExtension.getSoiVersion()
                     url = url+'?name='+test.name+'&project='+os.environ['BSCS_PROJECT']+'&soiVersion='+soiVersion

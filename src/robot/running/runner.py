@@ -159,8 +159,8 @@ class Runner(SuiteVisitor):
         
         if(os.environ.get('BSCS_PROJECT') is not None and os.environ['BSCS_PROJECT'] == "BSCS17"):
             url = 'http://localhost:8080/saveTestcase'
-            if(os.environ.get('1DCLMONITOR_SERVER') is not None):
-                url = 'http://'+os.environ['1DCLMONITOR_SERVER']+'/saveTestcase'
+            if(os.environ.get('ONEDCLMONITOR_SERVER') is not None):
+                url = 'http://'+os.environ['ONEDCLMONITOR_SERVER']+'/saveTestcase'
             
             testTags = [utils.html_escape(t) for t in test.tags]
             testTags = str([t.encode('ascii', 'ignore') for t in test.tags]).replace("'", '"') 
