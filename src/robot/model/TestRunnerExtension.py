@@ -20,7 +20,9 @@ class TestRunnerExtension():
             print self.activedLicense
             
     def initSoiVersion(self, soiVersion=None):
-        self.soiVersion = soiVersion
+        self.soiVersion = ""
+        if soiVersion is not None:
+            self.soiVersion = soiVersion
             
     def getSoiVersion(self):
         return self.soiVersion
