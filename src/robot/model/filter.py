@@ -91,6 +91,7 @@ class Filter(EmptySuiteRemover):
         for i in range(len(tests)):
             test = tests[i]
             testName = test.name
+            testSuite = test.parent._name
             soiVersion=""
             
             if self.runnerExtension.shouldTestBeExecuted(test.name, test.tags):
@@ -100,7 +101,7 @@ class Filter(EmptySuiteRemover):
                         url = 'http://'+os.environ['ONEDCLMONITOR_SERVER']+'/getTestcaseCoreLoopStage'
                         
                     soiVersion = self.runnerExtension.getSoiVersion()
-                    url = url+'?name='+test.name+'&project='+os.environ['BSCS_PROJECT']+'&soiVersion='+soiVersion
+                    url = url+'?name='+test.name+'&suite='+testSuite+'&project='+os.environ['BSCS_PROJECT']+'&soiVersion='+soiVersion
                     headers = {"Content-type": "application/json", "Accept":"application/json"}
                     response = requests.get(url, headers=headers)
                     testcaseStage = response.text[1:-1]
