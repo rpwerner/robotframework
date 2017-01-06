@@ -388,6 +388,8 @@ from robot.reporting import ResultWriter
 from robot.running import TestSuiteBuilder
 from robot.utils import Application
 
+import os
+import requests
 
 class RobotFramework(Application):
 
@@ -422,6 +424,15 @@ class RobotFramework(Application):
                 writer = ResultWriter(settings.output if settings.log
                                       else result)
                 writer.write_results(settings.get_rebot_settings())
+                
+        if(os.environ.get('BSCS_PROJECT') is not None and os.environ['BSCS_PROJECT'] == "BSCS17"):
+            url = 'http://localhost:8080/checkExecutedTests/'
+            if(os.environ.get('ONEDCLMONITOR_SERVER') is not None):
+                url = 'http://'+os.environ['ONEDCLMONITOR_SERVER']+'/checkExecutedTests/'
+            
+            url = url + os.environ['BSCS_PROJECT'] +"/"+os.environ['TESTCASE_STAGE']
+            requests.get(url, data="", headers="")
+                
         return result.return_code
         
     def getVariableFromSettings(self, settings, variableName):
