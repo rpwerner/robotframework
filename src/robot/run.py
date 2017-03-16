@@ -424,8 +424,8 @@ class RobotFramework(Application):
                 writer = ResultWriter(settings.output if settings.log
                                       else result)
                 writer.write_results(settings.get_rebot_settings())
-                
-        if(os.environ.get('BSCS_PROJECT') is not None and os.environ['BSCS_PROJECT'] == "BSCS17"):
+              
+        if(os.environ.get('BSCS_PROJECT') is not None and len(os.environ.get('BSCS_PROJECT')) > 1):
             url = 'http://localhost:8080/checkExecutedTests/'
             if(os.environ.get('ONEDCLMONITOR_SERVER') is not None):
                 url = 'http://'+os.environ['ONEDCLMONITOR_SERVER']+'/checkExecutedTests/'
