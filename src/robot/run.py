@@ -414,6 +414,8 @@ from robot.reporting import ResultWriter
 from robot.running import TestSuiteBuilder
 from robot.utils import Application
 
+import os
+import requests
 
 class RobotFramework(Application):
 
@@ -427,7 +429,19 @@ class RobotFramework(Application):
         LOGGER.info('Settings:\n%s' % unicode(settings))
         suite = TestSuiteBuilder(settings['SuiteNames'],
                                  settings['WarnOnSkipped']).build(*datasources)
-        suite.configure(**settings.suite_config)
+                                 
+        licensePath = self.getVariableFromSettings(settings, "licensepath:")
+        soiVersion = self.getVariableFromSettings(settings, "SOIVERSION:")
+        
+        if licensePath is not None:
+            """
+            Set the license path on the test suite configuration
+            """
+            suite.configure(**dict(settings.suite_config, soiVersion=soiVersion, licensepath=licensePath))
+        else:
+            suite.configure(**settings.suite_config)
+        
+        
         if settings.pre_run_modifiers:
             suite.visit(ModelModifier(settings.pre_run_modifiers,
                                       settings.run_empty_suite, LOGGER))
@@ -439,8 +453,27 @@ class RobotFramework(Application):
                 writer = ResultWriter(settings.output if settings.log
                                       else result)
                 writer.write_results(settings.get_rebot_settings())
+                
+        if(os.environ.get('BSCS_PROJECT') is not None and len(os.environ.get('BSCS_PROJECT')) > 1):
+            url = 'http://localhost:8080/checkExecutedTests/'
+            if(os.environ.get('ONEDCLMONITOR_SERVER') is not None):
+                url = 'http://'+os.environ['ONEDCLMONITOR_SERVER']+'/checkExecutedTests/'
+            
+            url = url + os.environ['BSCS_PROJECT'] +"/"+os.environ['TESTCASE_STAGE']
+            requests.get(url, data="", headers="")
+                
         return result.return_code
 
+    def getVariableFromSettings(self, settings, variableName):
+        for i in range(0, len(settings["Variables"])):
+            variablePair = settings["Variables"][i].split(variableName)
+            if len(variablePair) == 2:
+                """
+                Variable was found!
+                """
+                return variablePair[1]
+        return None
+        
     def validate(self, options, arguments):
         return self._filter_options_without_value(options), arguments
 

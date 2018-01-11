@@ -16,13 +16,14 @@ from robot import utils
 from robot.errors import DataError
 
 from .visitor import SuiteVisitor
+from TestRunnerExtension import TestRunnerExtension
 
 
 class SuiteConfigurer(SuiteVisitor):
 
     def __init__(self, name=None, doc=None, metadata=None, set_tags=None,
                  include_tags=None, exclude_tags=None, include_suites=None,
-                 include_tests=None, empty_suite_ok=False):
+                 include_tests=None, empty_suite_ok=False, soiVersion=None, licensepath=None):
         self.name = name
         self.doc = doc
         self.metadata = metadata
@@ -32,6 +33,13 @@ class SuiteConfigurer(SuiteVisitor):
         self.include_suites = include_suites
         self.include_tests = include_tests
         self.empty_suite_ok = empty_suite_ok
+        self.licensepath = licensepath
+        if licensepath is not None:
+            self.runnerExtension = TestRunnerExtension()
+            self.runnerExtension.initLicenses(licensepath)
+            self.runnerExtension.initSoiVersion(soiVersion)
+        else:
+            self.runnerExtension = None
 
     @property
     def add_tags(self):
@@ -57,7 +65,7 @@ class SuiteConfigurer(SuiteVisitor):
     def _filter(self, suite):
         name = suite.name
         suite.filter(self.include_suites, self.include_tests,
-                     self.include_tags, self.exclude_tags)
+                     self.include_tags, self.exclude_tags, self.runnerExtension)
         if not (suite.test_count or self.empty_suite_ok):
             self._raise_no_tests_error(name)
 

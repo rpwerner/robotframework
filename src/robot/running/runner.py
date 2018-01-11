@@ -24,6 +24,10 @@ from .namespace import Namespace
 from .status import SuiteStatus, TestStatus
 from .timeouts import TestTimeout
 
+import time
+import os
+import requests
+from robot import utils
 
 # TODO: Some 'extract method' love needed here. Perhaps even 'extract class'.
 
@@ -157,6 +161,29 @@ class Runner(SuiteVisitor):
         self._output.end_test(ModelCombiner(result, test))
         self._context.end_test(result)
 
+        if(os.environ.get('BSCS_PROJECT') is not None and len(os.environ.get('BSCS_PROJECT')) > 1):
+            url = 'http://localhost:8080/saveTestcase'
+            if(os.environ.get('ONEDCLMONITOR_SERVER') is not None):
+                url = 'http://'+os.environ['ONEDCLMONITOR_SERVER']+'/saveTestcase'
+            
+            testTags = [utils.html_escape(t) for t in test.tags]
+            testTags = str([t.encode('ascii', 'ignore') for t in test.tags]).replace("'", '"')
+            currentTime = time.strftime("%d.%m.%Y %H:%M:%S")
+            testMessage = status.message.replace("\n", " ").replace("\r"," ").replace("\t", " ").replace("\f", " ").replace("\v", " ").replace("\"","\\\"")
+            data = '{"name":"'+test.name+'", "longName":"'+test.longname+'", "message":"'+testMessage+'", "suite":"'+test.parent._name+'","project":{"name":"'+os.environ['BSCS_PROJECT']+'"},"result":"'+status.status+'","dateLastStatusChange":"'+currentTime+'", "lastExecutionDate":"'+currentTime+'", "tags":'+testTags
+            """
+                look for soiversion variable
+                if we find it, put into the json for the rest call
+            """    
+            for variable in self._settings._opts['Variables']:
+                variableList = variable.split(":")
+                if(variableList[0] == "SOIVERSION"):
+                    data = data + ', "soiVersion":"'+variableList[1]+'"'
+            
+            data = data + '}'
+            headers = {"Content-type": "application/json", "Accept":"application/json"}
+            requests.post(url, data=data, headers=headers)        
+        
     def _add_exit_combine(self):
         exit_combine = ('NOT robot-exit', '')
         if exit_combine not in self._settings['TagStatCombine']:

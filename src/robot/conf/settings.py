@@ -400,7 +400,9 @@ class RobotSettings(_BaseSettings):
                        'MonitorWidth'       : ('monitorwidth', 0),  # TODO: Remove in RF 3.0
                        'ConsoleMarkers'     : ('consolemarkers', 'AUTO'),
                        'MonitorMarkers'     : ('monitormarkers', None),  # TODO: Remove in RF 3.0
-                       'DebugFile'          : ('debugfile', None)}
+                       'DebugFile'          : ('debugfile', None),
+                       'LicensePath'        : ('licensepath', None),
+                       'SoiVersion'        : ('soiversion', None)}
 
     def get_rebot_settings(self):
         settings = RebotSettings()
